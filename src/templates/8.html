@@ -7,9 +7,251 @@
     <title>Sending.ac - Invite Email</title>
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="style.css" type="text/css">
-    <link rel="stylesheet" href="responsive.css" type="text/css">
-    
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        :root {
+            --primary-color: #00173C;
+            --fade-text-color: #7F8684;
+            --white-color: #FFFFFF;
+            --border-color: rgba(0, 23, 60, 0.15);
+            --background-gradient: linear-gradient(180deg, #FCF3BA 0%, #FFFFFF 100%);
+            --secondary-background-gradient: linear-gradient(180deg, #FEEDA2 50%, #FFE78A 100%);
+            --yellow-color: #FFE78A;
+        }
+
+        body {
+            background: var(--background-gradient) no-repeat;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        header h1 span {
+            font-weight: 500;
+        }
+
+        /* Main Wrapper */
+        main {
+            width: 100%;
+        }
+
+        .main-wrapper {
+            max-width: 1320px;
+            width: 100%;
+            margin: 0px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px 80px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        /* Celebrate Section */
+        #celebrate {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        #celebrate img {
+            width: 100px;
+        }
+
+        #celebrate h2 {
+            font-size: 48px;
+            font-weight: 900;
+        }
+
+
+        /* Create Account Section */
+        #createAccount h2 {
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        #createAccount h2 span {
+            font-weight: 900;
+        }
+
+        .button-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .button-content button {
+            width: 440px;
+            height: 60px;
+            background: var(--primary-color);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white-color);
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .button-content p {
+            font-size: 18px;
+            color: var(--fade-text-color);
+        }
+
+        /* Highlight Section */
+
+        .highlight span {
+            font-weight: 500;
+            color: var(--fade-text-color);
+        }
+
+        /* Footer Section */
+        footer {
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .footer-wrapper {
+            max-width: 1320px;
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-wrapper p {
+            font-size: 14px;
+            color: var(--fade-text-color);
+            text-align: left;
+        }
+
+        .footer-wrapper a {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+
+
+        #celebrate p {
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 24px;
+            text-align: center;
+            color: var(--fade-text-color);
+
+        }
+        .step .number {
+            width: 60px;
+            height: 60px;
+            border-radius: 99px;
+            background: var(--yellow-color);
+            font-family: Arial;
+            font-weight: 700;
+            font-size: 36px;
+            line-height: 24px;
+            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btnNotes .note br {
+            display: none;
+        }
+
+        main .cta-btn {
+            width: 440px;
+            height: 60px;
+            border-radius: 12px;
+            padding: 12px 48px;
+            background: var(--primary-color);
+            box-shadow: 0px 3px 9px 0px #00000017;
+            color: var(--white-color);
+            font-size: 24px;
+            line-height: 24px;
+            text-align: center;
+            font-weight: 700;
+
+        }
+
+        .video-wrapper h3 {
+            font-weight: 700;
+            font-size: 24px;
+            line-height: 24px;
+            text-align: center;
+            color: var(--fade-text-color);
+
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            max-height: 271px;
+            border-radius: 30px;
+        }
+
+        .highlightQA h2 {
+            font-weight: 800;
+            font-size: 34px;
+            line-height: 100%;
+            text-align: left;
+            color: var(--primary-color);
+
+        }
+
+        .highlightQA p {
+            font-weight: 500;
+            font-size: 20px;
+            text-align: left;
+            margin-left: 30px;
+            color: var(--primary-color);
+        }
+        #createAccount .headingConfirmSection {
+            font-weight: 700;
+            font-size: 34px;
+            line-height: 100%;
+            text-align: center;
+        }
+
+        #createAccount .headingConfirmSection span {
+            font-weight: 600;
+            color: #00173C80;
+        }
+        #celebrate Span{
+            font-size: 100px;
+            line-height: 100%;
+        }
+        #createAccount .ForgotitSection span{
+            font-weight: 900;
+            font-size: 34px;
+            color: var(--primary-color);
+        }
+
+        .paymentDecline span{
+            color:#000000;
+        }
+    </style>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
 </head>
