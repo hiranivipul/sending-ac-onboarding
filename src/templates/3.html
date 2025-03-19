@@ -181,37 +181,6 @@
 
         }
 
-        .steps-wrapper {
-            width: 560px;
-            border-radius: 30px;
-            border: 1px solid #00173C26;
-            padding: 60px 60px 30px 60px;
-            margin: 51px 0px 0px 0px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            row-gap: 40px;
-            background: var(--white-color);
-        }
-
-        .steps {
-            display: flex;
-            flex-direction: column;
-            row-gap: 24px;
-
-        }
-
-        .step {
-            font-weight: 700;
-            font-size: 24px;
-            line-height: 24px;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            column-gap: 33px;
-        }
 
         .step .number {
             width: 60px;
@@ -228,29 +197,6 @@
             justify-content: center;
         }
 
-        .step-text-span {
-            font-weight: 500;
-            font-size: 16px;
-            line-height: 6px;
-            letter-spacing: 0px;
-        }
-
-        .thirdStep {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .btnNotes {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            text-align: left;
-        }
 
         .btnNotes .note br {
             display: none;
@@ -269,21 +215,6 @@
             text-align: center;
             font-weight: 700;
 
-        }
-
-        .note {
-            font-weight: 700;
-            font-size: 14px;
-            line-height: 17.07px;
-            letter-spacing: 0px;
-            color: var(--fade-text-color);
-        }
-
-        .video-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 36px;
-            padding-top: 85px;
         }
 
         .video-wrapper h3 {
@@ -354,15 +285,101 @@
             font-size: 34px;
             color: var(--primary-color);
         }
-        .changebgcolor{
-            background: var(--white-color);
-        }
-        .paymentDecline{
-            background: linear-gradient(180deg, #FFDCDC 0%, #FFBEBE 100%);
-            text-align: left;
-        }
+
         .paymentDecline span{
             color:#000000;
+        }
+        @media only screen and (max-width: 575px) {
+            .main-wrapper {
+                padding: 30px 15px;
+            }
+
+            #createAccount h2 {
+                font-size: 24px;
+                line-height: 1.4;
+            }
+
+            #createAccount h2 br {
+                display: none;
+            }
+
+            #createAccount button {
+                width: 240px;
+                height: 50px;
+                font-size: 18px;
+            }
+
+            .button-content p br {
+                display: none;
+            }
+
+            .highlight {
+                width: 90%;
+                font-size: 16px;
+                padding: 20px;
+            }
+
+            .footer-wrapper {
+                padding: 20px;
+            }
+
+            .firstNote br {
+                display: none;
+            }
+
+
+            main .cta-btn {
+                width: 100%;
+            }
+
+            .video-wrapper br {
+                display: none;
+
+            }
+
+            #celebrate p br {
+                display: none;
+            }
+
+            #celebrate .Welcome-heading {
+                font-size: 30px;
+            }
+
+            .highlightQA {
+                gap: 20px;
+            }
+
+            .highlightQA h2 {
+                font-weight: 800;
+                font-size: 20px;
+                line-height: 100%;
+            }
+
+            .highlightQA p {
+                font-weight: 500;
+                font-size: 14px;
+                line-height: 20px;
+
+            }
+            #celebrate .ChangedStyleName{
+                font-size: 30px;
+                line-height: 36px;
+            }
+            #createAccount .headingConfirmSection {
+                font-size: 20px;
+                line-height: 30px;
+                text-align: center;
+            }
+
+            #createAccount .headingConfirmSection span {
+                font-weight: 600;
+                font-size: 20px;
+                color: #00173C80;
+            }
+            #celebrate .paymentfailed{
+                font-size: 34px;
+            }
+
         }
     </style>
     <!-- Google Fonts -->
