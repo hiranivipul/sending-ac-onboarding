@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sending.ac - Invite Email</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="stylesheet" href="responsive.css" type="text/css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <h1>sending<span>.ac</span></h1>
+    </header>
+
+    <main>
+        <div class="main-wrapper">
+            
+            <!-- Celebration Section -->
+            <section id="celebrate">
+                <span>&#127882;</span>
+                <h2>You got accepted!</h2>
+            </section>
+
+            <!-- Invitation Section -->
+            <section id="createAccount">
+                <h2>
+                    {{first_name}}, Finally! <br>
+                    {{company}} is officially invited <br>
+                    to <span>sending.ac</span>'s closed beta!!
+                </h2>
+                
+                <div class="button-content">
+                    <button>Create Account</button>
+                    <p>
+                        Very few have received this email so far. This button opens <br>
+                        an onboarding page (personalized to {{company}}).
+                    </p>
+                </div>
+            </section>
+
+            <!-- Highlight Section -->
+            <div class="highlight">
+                <strong>NOTE:</strong> <span>Each invite has a timer to ensure no spots go to waste. You can see the 
+                hours/days remaining in real-time by clicking on the button above.</span>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-wrapper">
+            <p>If you did not apply for sending.ac, you can ignore this email, and the account will be deleted.</p>
+
+            <p>&copy; 2025 Sending.ac. All rights reserved. You received this email because you applied for an app that 
+            helps you create unlimited mailboxes. To update your email subscription preferences, 
+            <a href="#">click here</a>.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

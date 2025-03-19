@@ -3,6 +3,6 @@ import mailRouter from '@modules/mail/mail.routes';
 
 const router = express.Router();
 
-router.use('/mail', mailRouter);
+router.use('/onboarding', mailRouter);
 
 export default router;
