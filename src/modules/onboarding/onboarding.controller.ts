@@ -3,7 +3,6 @@ import { onboardingService } from '@modules/onboarding/onboarding.service';
 import { Onboarding, UserTypeEnum } from '@database/models/onboarding.model';
 import Sequelize from 'sequelize';
 import crypto from 'crypto';
-import { Onboarding } from '../models/onboarding.model';
 
 export const normalOnboarding = async (
     req: Request,

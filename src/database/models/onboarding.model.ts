@@ -7,23 +7,17 @@ export enum UserTypeEnum {
 
 export interface OnboardingAttributes {
     id?: string;
-    responseId?: string;
-    submissionId?: string;
-    respondentId?: string;
-    formId?: string;
-    formName?: string;
     email: string; // Required
     name?: string;
-    companyUrl?: string;
-    mailboxesManaged?: number;
+    website?: string;
+    company_name?: string;
+    mailboxes?: number;
     mailboxProvider?: string;
     coldEmailBudget?: number;
     referralSource?: string;
     referralCode?: string;
     inviteCode?: string;
     token?: string;
-    eventId?: string;
-    eventType?: string;
     subPref?: string;
     userType: UserTypeEnum; // New enum field
     createdAt?: Date;
