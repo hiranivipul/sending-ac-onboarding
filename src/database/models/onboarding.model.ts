@@ -1,47 +1,43 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 
-export interface NormalOnboardingAttributes {
+export enum UserTypeEnum {
+    NORMAL = 'normal',
+    PRIORITY = 'priority',
+}
+
+export interface OnboardingAttributes {
     id?: string;
-    responseId?: string;
-    submissionId?: string;
-    respondentId?: string;
-    formId?: string;
-    formName?: string;
     email: string; // Required
     name?: string;
-    companyUrl?: string;
-    mailboxesManaged?: number;
+    website?: string;
+    company_name?: string;
+    mailboxes?: number;
     mailboxProvider?: string;
     coldEmailBudget?: number;
     referralSource?: string;
     referralCode?: string;
     inviteCode?: string;
     token?: string;
+    subPref?: string;
+    userType: UserTypeEnum; // New enum field
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export type NormalOnboardingCreationAttributes = Optional<
-    NormalOnboardingAttributes,
-    'id' | 'createdAt' | 'updatedAt'
+export type OnboardingCreationAttributes = Optional<
+    OnboardingAttributes,
+    'id' | 'createdAt' | 'updatedAt' | 'subPref'
 >;
 
-export class NormalOnboarding
-    extends Model<
-        NormalOnboardingAttributes,
-        NormalOnboardingCreationAttributes
-    >
-    implements NormalOnboardingAttributes
+export class Onboarding
+    extends Model<OnboardingAttributes, OnboardingCreationAttributes>
+    implements OnboardingAttributes
 {
     public id!: string;
-    public responseId?: string;
-    public submissionId?: string;
-    public respondentId?: string;
-    public formId?: string;
-    public formName?: string;
-    public email!: string; // Required
+    public email!: string;
     public name?: string;
-    public companyUrl?: string;
+    public website?: string;
+    public companyName?: string;
     public mailboxesManaged?: number;
     public mailboxProvider?: string;
     public coldEmailBudget?: number;
@@ -49,37 +45,19 @@ export class NormalOnboarding
     public referralCode?: string;
     public inviteCode?: string;
     public token?: string;
+    public subPref?: string;
+    public userType!: UserTypeEnum; // Required user type
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
-export default function (sequelize: Sequelize): typeof NormalOnboarding {
-    NormalOnboarding.init(
+export default function (sequelize: Sequelize): typeof Onboarding {
+    Onboarding.init(
         {
             id: {
                 type: DataTypes.UUID,
                 defaultValue: DataTypes.UUIDV4,
                 primaryKey: true,
-            },
-            responseId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            submissionId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            respondentId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            formId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            formName: {
-                type: DataTypes.STRING,
-                allowNull: true,
             },
             email: {
                 type: DataTypes.STRING,
@@ -92,14 +70,18 @@ export default function (sequelize: Sequelize): typeof NormalOnboarding {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            companyUrl: {
+            website: {
                 type: DataTypes.STRING,
                 allowNull: true,
                 validate: {
                     isUrl: true,
                 },
             },
-            mailboxesManaged: {
+            company_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            mailboxes: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
@@ -127,6 +109,18 @@ export default function (sequelize: Sequelize): typeof NormalOnboarding {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            subPref: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            userType: {
+                type: DataTypes.ENUM(
+                    UserTypeEnum.NORMAL,
+                    UserTypeEnum.PRIORITY,
+                ),
+                allowNull: false,
+                defaultValue: UserTypeEnum.NORMAL,
+            },
             createdAt: {
                 type: DataTypes.DATE,
                 defaultValue: DataTypes.NOW,
@@ -140,10 +134,10 @@ export default function (sequelize: Sequelize): typeof NormalOnboarding {
         },
         {
             sequelize,
-            tableName: 'normal_onboarding',
+            tableName: 'onboarding',
             timestamps: true,
         },
     );
 
-    return NormalOnboarding;
+    return Onboarding;
 }

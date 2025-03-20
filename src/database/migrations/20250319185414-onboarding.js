@@ -1,104 +1,106 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-    async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('normal_onboarding', {
+    up: async (queryInterface, Sequelize) => {
+        await queryInterface.createTable('onboarding', {
             id: {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 primaryKey: true,
                 allowNull: false,
             },
-            responseId: {
+            response_id: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'response_id',
             },
-            submissionId: {
+            submission_id: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'submission_id',
             },
-            respondentId: {
+            respondent_id: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'respondent_id',
             },
-            formId: {
+            form_id: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'form_id',
             },
-            formName: {
+            form_name: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'form_name',
             },
             email: {
                 type: Sequelize.STRING,
                 allowNull: false,
-                unique: true, // Ensuring uniqueness of email
+                unique: true,
             },
             name: {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            companyUrl: {
+            company_url: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'company_url',
             },
-            mailboxesManaged: {
+            mailboxes_managed: {
                 type: Sequelize.INTEGER,
                 allowNull: true,
-                field: 'mailboxes_managed',
             },
-            mailboxProvider: {
+            mailbox_provider: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'mailbox_provider',
             },
-            coldEmailBudget: {
+            cold_email_budget: {
                 type: Sequelize.INTEGER,
                 allowNull: true,
-                field: 'cold_email_budget',
             },
-            referralSource: {
+            referral_source: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'referral_source',
             },
-            referralCode: {
+            referral_code: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'referral_code',
             },
-            inviteCode: {
+            invite_code: {
                 type: Sequelize.STRING,
                 allowNull: true,
-                field: 'invite_code',
             },
             token: {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            createdAt: {
-                type: Sequelize.DATE,
-                allowNull: false,
-                field: 'created_at',
-                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            event_id: {
+                type: Sequelize.STRING,
+                allowNull: true,
             },
-            updatedAt: {
+            event_type: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            sub_pref: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            user_type: {
+                type: Sequelize.ENUM('normal', 'priority'),
+                allowNull: false,
+                defaultValue: 'normal',
+            },
+            created_at: {
                 type: Sequelize.DATE,
                 allowNull: false,
-                field: 'updated_at',
-                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                defaultValue: Sequelize.NOW,
+            },
+            updated_at: {
+                type: Sequelize.DATE,
+                allowNull: false,
+                defaultValue: Sequelize.NOW,
             },
         });
     },
 
-    async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('normal_onboarding');
+    down: async queryInterface => {
+        await queryInterface.dropTable('onboarding');
     },
 };

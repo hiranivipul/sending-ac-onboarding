@@ -1,6 +1,6 @@
 import logger from '@/utils/logger';
 import Sequelize from 'sequelize';
-import normalOnboarding from './models/normal-onboarding.model';
+import onboardingModel from './models/onboarding.model';
 import {
     DB_DIALECT,
     DB_HOST,
@@ -10,7 +10,6 @@ import {
     DB_USERNAME,
     NODE_ENV,
 } from '@/config';
-import { initPriorityOnboardingModel } from '@database/models/priority_onboarding.model';
 
 const sequelize = new Sequelize.Sequelize(
     DB_NAME as string,
@@ -40,11 +39,9 @@ const sequelize = new Sequelize.Sequelize(
 );
 
 sequelize.authenticate();
-const PriorityOnboardingModel = initPriorityOnboardingModel(sequelize);
 
 export const DB = {
-    NormalOnboarding: normalOnboarding(sequelize),
-    PriorityOnboarding: PriorityOnboardingModel,
+    Onboarding: onboardingModel(sequelize),
     sequelize, // connection instance (RAW queries)
     Sequelize, // library
 };
