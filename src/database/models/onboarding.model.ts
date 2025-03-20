@@ -34,14 +34,10 @@ export class Onboarding
     implements OnboardingAttributes
 {
     public id!: string;
-    public responseId?: string;
-    public submissionId?: string;
-    public respondentId?: string;
-    public formId?: string;
-    public formName?: string;
     public email!: string;
     public name?: string;
-    public companyUrl?: string;
+    public website?: string;
+    public companyName?: string;
     public mailboxesManaged?: number;
     public mailboxProvider?: string;
     public coldEmailBudget?: number;
@@ -49,8 +45,6 @@ export class Onboarding
     public referralCode?: string;
     public inviteCode?: string;
     public token?: string;
-    public eventId?: string;
-    public eventType?: string;
     public subPref?: string;
     public userType!: UserTypeEnum; // Required user type
     public readonly createdAt!: Date;
@@ -65,26 +59,6 @@ export default function (sequelize: Sequelize): typeof Onboarding {
                 defaultValue: DataTypes.UUIDV4,
                 primaryKey: true,
             },
-            responseId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            submissionId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            respondentId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            formId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            formName: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
             email: {
                 type: DataTypes.STRING,
                 allowNull: false,
@@ -96,14 +70,18 @@ export default function (sequelize: Sequelize): typeof Onboarding {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            companyUrl: {
+            website: {
                 type: DataTypes.STRING,
                 allowNull: true,
                 validate: {
                     isUrl: true,
                 },
             },
-            mailboxesManaged: {
+            company_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            mailboxes: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
@@ -128,14 +106,6 @@ export default function (sequelize: Sequelize): typeof Onboarding {
                 allowNull: true,
             },
             token: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            eventId: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            eventType: {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
