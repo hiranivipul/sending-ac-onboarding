@@ -4,6 +4,26 @@ import { Onboarding, UserTypeEnum } from '@database/models/onboarding.model';
 import Sequelize from 'sequelize';
 import crypto from 'crypto';
 
+// Function to extract company name from website URL
+const extractCompanyName = (url: string | undefined): string | null => {
+    console.log({ url });
+    if (!url) return null;
+    try {
+        // Ensure URL has a valid protocol
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = `https://${url}`; // Default to https
+        }
+
+        const hostname = new URL(url).hostname; // Extract hostname
+        const parts = hostname.replace(/^www\./, '').split('.'); // Remove "www." if exists and split by "."
+
+        // If domain has more than two parts, use second last part (e.g., "example.co.uk" → "example")
+        return parts.length > 2 ? parts[parts.length - 2] : parts[0];
+    } catch (error) {
+        return null;
+    }
+};
+
 export const normalOnboarding = async (
     req: Request,
     res: Response,
@@ -12,17 +32,16 @@ export const normalOnboarding = async (
         const { data } = req.body;
 
         if (!data?.fields || !data.responseId) {
-            return res.status(400).json({
-                success: false,
-                message: 'Missing required fields.',
-            });
+            return res
+                .status(400)
+                .json({ success: false, message: 'Missing required fields.' });
         }
 
         const fieldMapping: Record<string, string> = {
             question_8zrxZO: 'email',
             question_xjzYqG: 'name',
-            question_vrzyK8: 'companyUrl',
-            question_NDPojG: 'mailboxesManaged',
+            question_vrzyK8: 'website',
+            question_NDPojG: 'mailboxes',
             question_54VxZ6: 'mailboxProvider',
             question_qazVr2: 'coldEmailBudget',
             question_KeGlkK: 'referralSource',
@@ -31,7 +50,12 @@ export const normalOnboarding = async (
                 'inviteCode',
         };
 
-        const extractedData: Record<string, any> = {};
+        // Initialize all fields with `null`
+        const extractedData: Record<string, any> = Object.fromEntries(
+            Object.values(fieldMapping).map(key => [key, null]),
+        );
+
+        // Map provided fields
         for (const field of data.fields) {
             if (fieldMapping[field.key]) {
                 extractedData[fieldMapping[field.key]] = field.value || null;
@@ -57,14 +81,12 @@ export const normalOnboarding = async (
         // Generate a unique token
         const generatedToken = crypto.randomBytes(32).toString('hex');
 
+        // Extract company name from website
+        extractedData.companyName = extractCompanyName(extractedData.website);
+
         const newEntry = await Onboarding.create({
             userType: UserTypeEnum.NORMAL,
-            responseId: data.responseId || null,
-            submissionId: data.submissionId || null,
-            respondentId: data.respondentId || null,
-            formId: data.formId || null,
-            formName: data.formName || null,
-            createdAt: new Date(data.createdAt),
+            createdAt: new Date(),
             token: generatedToken,
             ...extractedData,
         });
@@ -108,21 +130,19 @@ export const priorityOnboarding = async (
     res: Response,
 ): Promise<Response> => {
     try {
-        const { eventId, eventType, createdAt, data } = req.body;
-
-        if (!data?.fields || !data.responseId || !eventId) {
-            return res.status(400).json({
-                success: false,
-                message: 'Missing required fields.',
-            });
-        }
+        const { data } = req.body;
 
         const fieldMapping: Record<string, string> = {
             question_KeRGYK: 'email',
             'question_aekEYE_cfa009ea-fbd8-4822-8ca3-a8d8c1a44f6f': 'subPref',
         };
 
-        const extractedData: Record<string, any> = {};
+        // Initialize all fields with `null`
+        const extractedData: Record<string, any> = Object.fromEntries(
+            Object.values(fieldMapping).map(key => [key, null]),
+        );
+
+        // Map provided fields
         for (const field of data.fields) {
             if (fieldMapping[field.key]) {
                 extractedData[fieldMapping[field.key]] = field.value || null;
@@ -145,16 +165,13 @@ export const priorityOnboarding = async (
             });
         }
 
+        // Generate a unique token
+        const generatedToken = crypto.randomBytes(32).toString('hex');
+
         const newEntry = await Onboarding.create({
             userType: UserTypeEnum.PRIORITY,
-            eventId,
-            eventType,
-            responseId: data.responseId || null,
-            submissionId: data.submissionId || null,
-            respondentId: data.respondentId || null,
-            formId: data.formId || null,
-            formName: data.formName || null,
-            createdAt: new Date(createdAt),
+            createdAt: new Date(),
+            token: generatedToken,
             ...extractedData,
         });
 
@@ -163,7 +180,7 @@ export const priorityOnboarding = async (
             'Welcome to Our Service!',
             'existing-application',
             {
-                name: newEntry.formName || 'User',
+                name: newEntry.name || 'User',
                 subPref: newEntry.subPref || '300K',
             },
         );
@@ -197,13 +214,12 @@ export const validateTokenAndConfirmUser = async (
     res: Response,
 ) => {
     try {
-        const { token } = req.params; // Extract token from URL params
+        const { token } = req.params;
 
         if (!token) {
             return res.status(400).json({ message: 'Token is required' });
         }
 
-        // Find user with the given token
         const user = await Onboarding.findOne({ where: { token } });
 
         if (!user) {

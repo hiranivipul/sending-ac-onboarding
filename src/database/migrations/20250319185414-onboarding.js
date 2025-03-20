@@ -9,26 +9,6 @@ module.exports = {
                 primaryKey: true,
                 allowNull: false,
             },
-            response_id: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
-            submission_id: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
-            respondent_id: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
-            form_id: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
-            form_name: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
             email: {
                 type: Sequelize.STRING,
                 allowNull: false,
@@ -38,11 +18,15 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            company_url: {
+            website: {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            mailboxes_managed: {
+            company_name: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            mailboxes: {
                 type: Sequelize.INTEGER,
                 allowNull: true,
             },
@@ -67,14 +51,6 @@ module.exports = {
                 allowNull: true,
             },
             token: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
-            event_id: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
-            event_type: {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
