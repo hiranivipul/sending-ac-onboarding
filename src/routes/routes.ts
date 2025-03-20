@@ -1,5 +1,5 @@
 import express from 'express';
-import mailRouter from '@modules/mail/mail.routes';
+import mailRouter from '@modules/onboarding/onboarding.routes';
 
 const router = express.Router();
 

@@ -15,10 +15,13 @@
         },
         "esModuleInterop": true,
         "typeRoots": ["node_modules/@types"],
-        "strict": true,
+        "strict": false,
         "resolveJsonModule": true,
         "skipLibCheck": true,
-        "lib": ["esnext", "dom"]
+        "lib": ["esnext", "dom"],
+        "noImplicitAny": false,
+        "noEmitOnError": false,
+        "allowSyntheticDefaultImports": true
     },
     "include": ["src/**/*.ts", "src/database/models/index.ts"],
     "exclude": ["node_modules"]

@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { mailConfig } from '@/config';
 
-class MailService {
+class OnboardingService {
     private transporter;
 
     constructor() {
@@ -49,7 +49,7 @@ class MailService {
     ) {
         const templatePath = path.join(
             __dirname,
-            `../templates/${templateName}.html`,
+            `../../templates/${templateName}.html`,
         );
 
         let html = fs.readFileSync(templatePath, 'utf-8');
@@ -63,4 +63,4 @@ class MailService {
     }
 }
 
-export const mailService = new MailService();
+export const onboardingService = new OnboardingService();

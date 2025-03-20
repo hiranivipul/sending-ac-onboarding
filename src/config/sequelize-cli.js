@@ -1,9 +1,8 @@
 const { config } = require('dotenv');
-config({ path: `.env.${process.env.NODE_ENV || 'development'}` });
+config({ path: `.env` });
 
 const { DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HOST, DB_DIALECT } =
     process.env;
-console.log(DB_HOST);
 module.exports = {
     username: DB_USERNAME,
     password: DB_PASSWORD,
