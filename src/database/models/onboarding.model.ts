@@ -10,7 +10,7 @@ export interface OnboardingAttributes {
     email: string; // Required
     name?: string;
     website?: string;
-    company_name?: string;
+    companyName?: string;
     mailboxes?: number;
     mailboxProvider?: string;
     coldEmailBudget?: number;
@@ -77,7 +77,7 @@ export default function (sequelize: Sequelize): typeof Onboarding {
                     isUrl: true,
                 },
             },
-            company_name: {
+            companyName: {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
