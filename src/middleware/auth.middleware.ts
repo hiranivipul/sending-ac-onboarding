@@ -9,14 +9,15 @@ export const validateAuthToken = async (
         const authToken = req.headers.authorization;
 
         if (!authToken) {
-            return res
-                .status(400)
-                .json({ message: 'Authorization token is required' });
+            res.status(400).json({
+                message: 'Authorization token is required',
+            });
+            return;
         }
 
         next();
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
+        return;
     }
 };

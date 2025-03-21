@@ -1,31 +1,25 @@
-# Use the official Go image as the base image
-FROM golang:1.23-alpine AS Base
+# Start of Selection
+# Use the official Node.js image as the base image
+FROM node:18-alpine AS Base
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy go.mod and go.sum files
-COPY go.mod go.sum ./
+# Copy package.json and package-lock.json files
+COPY package.json package-lock.json ./
 
-# Download dependencies
-RUN go mod download
+# Install dependencies
+RUN npm install
 
 # Copy the entire project
 COPY . .
 
-# Build the Go application
-RUN go build -o /app/main .
-
-FROM golang:1.23-alpine
-
-WORKDIR /app
-
-RUN apk add curl
-
-COPY --from=base /app/main .
+# Build the application
+RUN npm run build
 
 # Expose the port the app runs on
-EXPOSE 8080
+EXPOSE 3000
 
 # Command to run the application
-CMD ["/app/main"]
+CMD ["npm", "start"]
+# End of Selection

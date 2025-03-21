@@ -1,5 +1,5 @@
 {
-    "name": "express boilerplate",
+    "name": "sending.ac",
     "version": "1.0.0",
     "description": "",
     "main": "server.ts",
@@ -14,10 +14,6 @@
     },
     "author": "",
     "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pius706975/express-typescript-sequelize-boilerplate.git"
-    },
     "dependencies": {
         "bcrypt": "^5.1.1",
         "cors": "^2.8.5",

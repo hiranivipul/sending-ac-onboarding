@@ -11,14 +11,16 @@ const handleOnboarding = async (
     userType: UserTypeEnum,
     fieldMapping: Record<string, string>,
     emailTemplate: string,
-): Promise<Response> => {
+): Promise<void> => {
     try {
         const { data } = req.body;
 
         if (!data?.fields || !data.responseId) {
-            return res
-                .status(400)
-                .json({ success: false, message: 'Missing required fields.' });
+            res.status(400).json({
+                success: false,
+                message: 'Missing required fields.',
+            });
+            return;
         }
 
         // Initialize all fields with `null`
@@ -34,19 +36,22 @@ const handleOnboarding = async (
         }
 
         if (!extractedData.email) {
-            return res
-                .status(400)
-                .json({ success: false, message: 'Email is required.' });
+            res.status(400).json({
+                success: false,
+                message: 'Email is required.',
+            });
+            return;
         }
 
         const existingEntry = await Onboarding.findOne({
             where: { email: extractedData.email },
         });
         if (existingEntry) {
-            return res.status(409).json({
+            res.status(409).json({
                 success: false,
                 message: 'Email already exists. Please use a different email.',
             });
+            return;
         }
 
         // Generate a unique token
@@ -60,7 +65,7 @@ const handleOnboarding = async (
             ...extractedData,
         });
 
-        onboardingService.sendEmail(
+        await onboardingService.sendEmail(
             newEntry.email,
             'Welcome to Our Service!',
             emailTemplate,
@@ -70,34 +75,40 @@ const handleOnboarding = async (
             },
         );
 
-        return res.status(201).json({ success: true, data: null });
+        res.status(201).json({ success: true, data: null });
+        return;
     } catch (error: any) {
         console.error(`Error storing ${userType} onboarding response:`, error);
 
         if (error instanceof Sequelize.UniqueConstraintError) {
-            return res
-                .status(409)
-                .json({ success: false, message: 'Email already exists.' });
+            res.status(409).json({
+                success: false,
+                message: 'Email already exists.',
+            });
+            return;
         }
 
-        if (error instanceof Sequelize.ValidationError) {
-            return res.status(400).json({
+        if (!(error instanceof Sequelize.ValidationError)) {
+            res.status(500).json({
+                success: false,
+                message: 'Internal Server Error',
+            });
+            return;
+        } else {
+            res.status(400).json({
                 success: false,
                 message: 'Validation error',
                 errors: error.errors.map(err => err.message),
             });
+            return;
         }
-
-        return res
-            .status(500)
-            .json({ success: false, message: 'Internal Server Error' });
     }
 };
 
-export const normalOnboarding = (
+export const normalOnboarding = async (
     req: Request,
     res: Response,
-): Promise<Response> => {
+): Promise<void> => {
     const fieldMapping = {
         question_8zrxZO: 'email',
         question_xjzYqG: 'name',
@@ -105,7 +116,7 @@ export const normalOnboarding = (
         question_NDPojG: 'mailboxes',
         question_54VxZ6: 'mailboxProvider',
         question_qazVr2: 'coldEmailBudget',
-        question_KeGlkK: 'referralSource',
+        question_KeGlK: 'referralSource',
         question_dNzddq: 'referralCode',
         'question_YR9aa5_6f90f03a-0362-4a6f-ae7a-7f55a54f6686': 'inviteCode',
     };
@@ -118,10 +129,10 @@ export const normalOnboarding = (
     );
 };
 
-export const priorityOnboarding = (
+export const priorityOnboarding = async (
     req: Request,
     res: Response,
-): Promise<Response> => {
+): Promise<void> => {
     const fieldMapping = {
         question_KeRGYK: 'email',
         'question_aekEYE_cfa009ea-fbd8-4822-8ca3-a8d8c1a44f6f': 'subPref',
@@ -138,28 +149,30 @@ export const priorityOnboarding = (
 export const validateTokenAndConfirmUser = async (
     req: Request,
     res: Response,
-) => {
+): Promise<void> => {
     try {
         const { token } = req.params;
 
         if (!token) {
-            return res.status(400).json({ message: 'Token is required' });
+            res.status(400).json({ message: 'Token is required' });
+            return;
         }
 
         const user = await Onboarding.findOne({ where: { token } });
 
         if (!user) {
-            return res
-                .status(401)
-                .json({ message: 'Invalid or expired token' });
+            res.status(401).json({ message: 'Invalid or expired token' });
+            return;
         }
 
         // Remove token after successful validation
         await Onboarding.update({ token: null }, { where: { id: user.id } });
 
         res.json({ message: 'Token validated successfully', user });
+        return;
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
+        return;
     }
 };
