@@ -1,16 +1,22 @@
 import { Request, Response } from 'express';
-import { onboardingService } from '@modules/onboarding/onboarding.service';
+import { emailService } from '@utils/third-party/email/email-service';
 import { Onboarding, UserTypeEnum } from '@database/models/onboarding.model';
 import Sequelize from 'sequelize';
 import crypto from 'crypto';
-import { extractCompanyName } from '@utils/helper';
+import {
+    extractCompanyName,
+    extractFirstName,
+    extractNameFromEmail,
+} from '@utils/helper';
+import { MAIN_APP_URL } from '@/config';
+import { EmailTemplate } from '@utils/constant';
 
 const handleOnboarding = async (
     req: Request,
     res: Response,
     userType: UserTypeEnum,
     fieldMapping: Record<string, string>,
-    emailTemplate: string,
+    emailTemplate: { name: string; subject: string },
 ): Promise<void> => {
     try {
         const { data } = req.body;
@@ -57,7 +63,13 @@ const handleOnboarding = async (
         // Generate a unique token
         const generatedToken = crypto.randomBytes(11).toString('hex');
         extractedData.companyName = extractCompanyName(extractedData.website);
-
+        if (
+            extractedData.name === null ||
+            extractedData.name === '' ||
+            extractedData.name === undefined
+        ) {
+            extractedData.name = extractNameFromEmail(extractedData.email);
+        }
         const newEntry = await Onboarding.create({
             userType,
             createdAt: new Date(),
@@ -65,15 +77,30 @@ const handleOnboarding = async (
             ...extractedData,
         });
 
-        await onboardingService.sendEmail(
-            newEntry.email,
-            'Welcome to Our Service!',
-            emailTemplate,
-            {
-                name: newEntry.name || 'User',
-                url: `https://www.google.com?token=${generatedToken}`,
-            },
-        );
+        if (emailTemplate.name === EmailTemplate.regularApplication.name) {
+            const name = extractFirstName(newEntry.name);
+            emailService.sendEmail(
+                newEntry.email,
+                EmailTemplate.regularApplication.subject,
+                EmailTemplate.regularApplication.name,
+                {
+                    name: name || '',
+                    confirm_url: `${MAIN_APP_URL}?token=${generatedToken}`,
+                },
+            );
+        } else if (
+            emailTemplate.name === EmailTemplate.existingApplication.name
+        ) {
+            emailService.sendEmail(
+                newEntry.email,
+                EmailTemplate.existingApplication.subject,
+                EmailTemplate.existingApplication.name,
+                {
+                    name: newEntry.name || '',
+                    subPref: newEntry.subPref,
+                },
+            );
+        }
 
         res.status(201).json({ success: true, data: null });
         return;
@@ -125,7 +152,7 @@ export const normalOnboarding = async (
         res,
         UserTypeEnum.NORMAL,
         fieldMapping,
-        'regular-application',
+        EmailTemplate.regularApplication,
     );
 };
 
@@ -142,7 +169,7 @@ export const priorityOnboarding = async (
         res,
         UserTypeEnum.PRIORITY,
         fieldMapping,
-        'existing-application',
+        EmailTemplate.existingApplication,
     );
 };
 

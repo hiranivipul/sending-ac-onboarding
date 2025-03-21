@@ -17,3 +17,18 @@ export const extractCompanyName = (url: string | undefined): string | null => {
         return null;
     }
 };
+
+export const extractNameFromEmail = (email: string): string | null => {
+    if (!email) return null;
+    const namePart = email.split('@')[0]; // Get the part before the '@'
+    const name = namePart.replace(/[._\-]/g, ' '); // Replace dots, underscores, and hyphens with spaces
+    return name.charAt(0).toUpperCase() + name.slice(1); // Capitalize the first letter
+};
+
+export const extractFirstName = (
+    fullName: string | undefined,
+): string | null => {
+    if (!fullName) return null;
+    const names = fullName.split(' '); // Split the full name by spaces
+    return names[0].charAt(0).toUpperCase() + names[0].slice(1); // Capitalize the first letter of the first name
+};
