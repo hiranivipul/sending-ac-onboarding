@@ -20,6 +20,7 @@ export interface OnboardingAttributes {
     token?: string;
     subPref?: string;
     userType: UserTypeEnum; // New enum field
+    reminderSent: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -47,6 +48,7 @@ export class Onboarding
     public token?: string;
     public subPref?: string;
     public userType!: UserTypeEnum; // Required user type
+    public reminderSent: boolean;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -120,6 +122,11 @@ export default function (sequelize: Sequelize): typeof Onboarding {
                 ),
                 allowNull: false,
                 defaultValue: UserTypeEnum.NORMAL,
+            },
+            reminderSent: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false,
             },
             createdAt: {
                 type: DataTypes.DATE,

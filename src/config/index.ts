@@ -20,13 +20,34 @@ export const DB_DIALECT = getEnv('DB_DIALECT');
 
 export const MAIN_APP_URL = getEnv('MAIN_APP_URL');
 
-export const mailConfig = {
-    host: getEnv('MAIL_HOST', 'smtp.gmail.com'),
-    port: parseInt(getEnv('MAIL_PORT', '587'), 10),
-    auth: {
-        user: getEnv('MAIL_USER'),
-        pass: getEnv('MAIL_PASS'),
-    },
-    from: `${getEnv('MAIL_FROM')}`,
-    replyTo: `${getEnv('MAIL_REPLY_TO')}`,
+export const getMailAccounts = (): Record<
+    string,
+    { user: string; pass: string }
+> => {
+    try {
+        const rawEnv = process.env.MAIL_ACCOUNTS || '{}';
+        return JSON.parse(rawEnv);
+    } catch (error) {
+        console.error('❌ Failed to parse MAIL_ACCOUNTS:', error);
+        return {};
+    }
+};
+
+export const getMailConfigByName = (accountName: string) => {
+    const accounts = getMailAccounts();
+    const selectedAccount = accounts[accountName];
+    if (!selectedAccount) {
+        throw new Error(
+            `❌ Email configuration for "${accountName}" not found.`,
+        );
+    }
+
+    return {
+        host: process.env.MAIL_HOST || 'sandbox.smtp.mailtrap.io',
+        port: parseInt(process.env.MAIL_PORT || '587', 10),
+        auth: {
+            user: selectedAccount.user,
+            pass: selectedAccount.pass,
+        },
+    };
 };
