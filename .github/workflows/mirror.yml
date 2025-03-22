@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0  # Fetch full history
 
-      - name: Remove .github folder from all branches
+      - name: Exclude .github folder from all branches
         run: |
           git config --global user.email "hiranivipuls@gmail.com"
           git config --global user.name "Vipul Hirani"
@@ -25,11 +25,8 @@ jobs:
           for branch in $(git branch -r | grep -v '\->' | sed 's/origin\///'); do
             git checkout $branch
 
-            # Remove .github folder if it exists
-            if [ -d ".github" ]; then
-              git rm -r --cached .github
-              git commit --amend --no-edit
-            fi
+            # Ensure .github folder is excluded from commits
+            git update-index --assume-unchanged .github
 
             # Rewrite commit author
             git rebase -i --root
@@ -40,8 +37,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.CLIENT_REPO_PAT }}
         run: |
-          git remote add client https://x-access-token:${GITHUB_TOKEN}@github.com:sending-ac/onboarding.git
+          git remote add client https://x-access-token:${GITHUB_TOKEN}@github.com/client-org/client-repo.git
           
-          # Force push all branches without .github
+          # Force push all branches while excluding .github
           git push --force --all client
           git push --force --tags client
