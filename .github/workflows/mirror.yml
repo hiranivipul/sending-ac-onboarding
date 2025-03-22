@@ -23,10 +23,14 @@ jobs:
 
           # Loop through all branches
           for branch in $(git branch -r | grep -v '\->' | sed 's/origin\///'); do
-            git checkout $branch
+            git checkout $branch || continue  # Continue if checkout fails
 
+            # Check if .github exists before attempting to remove it
+            if [ -d ".github" ]; then
+              git rm -r --cached .github  # Remove .github from the index
+            fi
+            
             # Create a single commit with all changes excluding .github
-            git rm -r --cached .github  # Remove .github from the index
             git commit -m "commit " || true  # Create a single commit
 
             # Rewrite commit author
