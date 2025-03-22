@@ -37,12 +37,19 @@ jobs:
           done
 
 
-      - name: Push all branches to client repo (excluding .github)
+      - name: Push all branches to client repo
         env:
           GITHUB_TOKEN: ${{ secrets.CLIENT_REPO_PAT }}
         run: |
-          git remote add client https://x-access-token:${GITHUB_TOKEN}@github.com/client-org/client-repo.git
+          # Ensure remote doesn't already exist
+          if ! git remote | grep -q "^client$"; then
+            git remote add client https://github.com/sending-ac/onboarding.git
+          fi
           
-          # Force push all branches without .github
+          # Authenticate with GitHub token
+          git config --global credential.helper store
+          echo "https://${GITHUB_TOKEN}:x-oauth-basic@github.com" > ~/.git-credentials
+          
+          # Force push all branches and tags to the client repo
           git push --force --all client
           git push --force --tags client
