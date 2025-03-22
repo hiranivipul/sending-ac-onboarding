@@ -1,11 +1,21 @@
 import nodemailer from 'nodemailer';
 import fs from 'fs';
 import path from 'path';
-import { getMailConfigByName } from '@/config';
+import { getMailAccounts, getMailConfigByName } from '@/config';
+const transporter = {};
 
 class EmailService {
+    constructor() {
+        const accounts = getMailAccounts();
+        const accountKeys = Object.keys(accounts);
+        for (const accountKey of accountKeys) {
+            transporter[accountKey] = nodemailer.createTransport(
+                getMailConfigByName(accountKey),
+            );
+        }
+    }
     async sendEmail(
-        accountName: string,
+        accountKey: string,
         to: string,
         subject: string,
         template: string,
@@ -13,12 +23,11 @@ class EmailService {
     ) {
         try {
             // Get mail configuration based on account name
-            const mailConfig = getMailConfigByName(accountName);
-            const transporter = nodemailer.createTransport(mailConfig);
+            const mailConfig = getMailConfigByName(accountKey);
 
             const htmlContent = this.loadHtmlTemplate(template, replacements);
 
-            const info = await transporter.sendMail({
+            const info = await transporter[accountKey].sendMail({
                 from: mailConfig.auth.user, // Use the correct sender email
                 to,
                 subject,
@@ -27,12 +36,12 @@ class EmailService {
             });
 
             console.log(
-                `✅ Email sent using ${accountName} to ${to}: ${info.messageId}`,
+                `✅ Email sent using '${accountKey}' to ${to}: ${info.messageId}`,
             );
             return { success: true, message: 'Email sent successfully' };
         } catch (error: any) {
             console.error(
-                `❌ Email failed using ${accountName} to ${to}: ${error.message}`,
+                `❌ Email failed using '${accountKey}' to ${to}: ${error.message}`,
             );
             return { success: false, error: error.message };
         }

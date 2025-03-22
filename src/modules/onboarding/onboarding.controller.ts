@@ -80,7 +80,7 @@ const handleOnboarding = async (
         if (emailTemplate.name === EmailTemplate.regularApplication.name) {
             const name = extractFirstName(newEntry.name);
             emailService.sendEmail(
-                EmailTemplate.regularApplication.credential,
+                EmailTemplate.regularApplication.accountKey,
                 newEntry.email,
                 EmailTemplate.regularApplication.subject,
                 EmailTemplate.regularApplication.name,
@@ -93,7 +93,7 @@ const handleOnboarding = async (
             emailTemplate.name === EmailTemplate.existingApplication.name
         ) {
             emailService.sendEmail(
-                EmailTemplate.existingApplication.credential,
+                EmailTemplate.existingApplication.accountKey,
                 newEntry.email,
                 EmailTemplate.existingApplication.subject,
                 EmailTemplate.existingApplication.name,
@@ -228,7 +228,7 @@ export const sendOnboardingReminders = async (req: Request, res: Response) => {
             const emailTemplate = EmailTemplate.reminder;
 
             emailService.sendEmail(
-                emailTemplate.credential,
+                emailTemplate.accountKey,
                 user.email,
                 emailTemplate.subject,
                 emailTemplate.name,
