@@ -31,12 +31,11 @@ jobs:
 
       - name: Rewrite commit author in all branches
         run: |
-          # Rewrite commit author for every branch
-          for branch in $(git branch -r | grep -v '\->' | sed 's/origin\///'); do
+          for branch in $(git for-each-ref --format '%(refname:short)' refs/heads/); do
             git checkout $branch
-            git rebase -i --root
-            git filter-repo --replace-commit-message '.*' 'Author: Vipul Hirani <hiranivipuls@gmail.com>'
+            git commit --amend --no-edit --author="Vipul Hirani <hiranivipuls@gmail.com>"
           done
+
 
       - name: Push all branches to client repo (excluding .github)
         env:
