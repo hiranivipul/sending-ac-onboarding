@@ -25,11 +25,11 @@ jobs:
           for branch in $(git branch -r | grep -v '\->' | sed 's/origin\///'); do
             git checkout $branch
 
-            # Ensure .github folder is excluded from commits
-            git update-index --assume-unchanged .github
+            # Create a single commit with all changes excluding .github
+            git rm -r --cached .github  # Remove .github from the index
+            git commit -m "commit " || true  # Create a single commit
 
             # Rewrite commit author
-            git rebase -i --root
             git filter-repo --replace-commit-message '.*' 'Author: YourName <your-email>'
           done
 
