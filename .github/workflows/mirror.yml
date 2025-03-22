@@ -1,11 +1,11 @@
-name: Mirror all branches with rewritten author (excluding .github)
+name: Mirror Repo to Client (Change Author & Exclude .github)
 
 on:
   push:
     branches:
-      - '**'  # Trigger on all branches
+      - '**'  # Trigger on any branch push
 
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:  # Allow manual execution
 
 jobs:
   mirror:
@@ -16,25 +16,26 @@ jobs:
         with:
           fetch-depth: 0  # Fetch full history
 
-      - name: Exclude .github folder from all branches
+      - name: Set new commit author
         run: |
           git config --global user.email "hiranivipuls@gmail.com"
           git config --global user.name "Vipul Hirani"
 
-          # Loop through all branches
+      - name: Remove .github folder and commit changes
+        run: |
+          # Remove .github folder from all branches
+          if [ -d ".github" ]; then
+            git rm -r --cached .github
+            git commit -m "Removed .github workflows before mirroring" || echo "No changes to commit"
+          fi
+
+      - name: Rewrite commit author in all branches
+        run: |
+          # Rewrite commit author for every branch
           for branch in $(git branch -r | grep -v '\->' | sed 's/origin\///'); do
-            git checkout $branch || continue  # Continue if checkout fails
-
-            # Check if .github exists before attempting to remove it
-            if [ -d ".github" ]; then
-              git rm -r --cached .github  # Remove .github from the index
-            fi
-            
-            # Create a single commit with all changes excluding .github
-            git commit -m "commit " || true  # Create a single commit
-
-            # Rewrite commit author
-            git filter-repo --replace-commit-message '.*' 'Author: YourName <your-email>'
+            git checkout $branch
+            git rebase -i --root
+            git filter-repo --replace-commit-message '.*' 'Author: Vipul Hirani <hiranivipuls@gmail.com>'
           done
 
       - name: Push all branches to client repo (excluding .github)
@@ -43,6 +44,6 @@ jobs:
         run: |
           git remote add client https://x-access-token:${GITHUB_TOKEN}@github.com/client-org/client-repo.git
           
-          # Force push all branches while excluding .github
+          # Force push all branches without .github
           git push --force --all client
           git push --force --tags client
