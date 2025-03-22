@@ -1,6 +1,5 @@
 // Function to extract company name from website URL
 export const extractCompanyName = (url: string | undefined): string | null => {
-    console.log({ url });
     if (!url) return null;
     try {
         // Ensure URL has a valid protocol
