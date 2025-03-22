@@ -1,44 +1,48 @@
 import nodemailer from 'nodemailer';
 import fs from 'fs';
 import path from 'path';
-import { mailConfig } from '@/config';
+import { getMailAccounts, getMailConfigByName } from '@/config';
+const transporter = {};
 
 class EmailService {
-    private transporter;
-
     constructor() {
-        this.transporter = nodemailer.createTransport({
-            host: mailConfig.host,
-            port: mailConfig.port,
-            auth: {
-                user: mailConfig.auth.user,
-                pass: mailConfig.auth.pass,
-            },
-        });
+        const accounts = getMailAccounts();
+        const accountKeys = Object.keys(accounts);
+        for (const accountKey of accountKeys) {
+            transporter[accountKey] = nodemailer.createTransport(
+                getMailConfigByName(accountKey),
+            );
+        }
     }
-
-    // Send Email Function
     async sendEmail(
+        accountKey: string,
         to: string,
         subject: string,
         template: string,
         replacements: Record<string, string>,
     ) {
         try {
+            // Get mail configuration based on account name
+            const mailConfig = getMailConfigByName(accountKey);
+
             const htmlContent = this.loadHtmlTemplate(template, replacements);
 
-            const info = await this.transporter.sendMail({
-                from: mailConfig.from,
+            const info = await transporter[accountKey].sendMail({
+                from: mailConfig.auth.user, // Use the correct sender email
                 to,
                 subject,
                 html: htmlContent,
-                replyTo: mailConfig.replyTo,
+                replyTo: mailConfig.auth.user,
             });
 
-            console.log(`✅ Email sent to ${to}: ${info.messageId}`);
+            console.log(
+                `✅ Email sent using '${accountKey}' to ${to}: ${info.messageId}`,
+            );
             return { success: true, message: 'Email sent successfully' };
         } catch (error: any) {
-            console.error(`❌ Email failed to ${to}: ${error.message}`);
+            console.error(
+                `❌ Email failed using '${accountKey}' to ${to}: ${error.message}`,
+            );
             return { success: false, error: error.message };
         }
     }

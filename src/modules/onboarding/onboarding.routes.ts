@@ -2,6 +2,7 @@ import express from 'express';
 import {
     normalOnboarding,
     priorityOnboarding,
+    sendOnboardingReminders,
     validateTokenAndConfirmUser,
 } from './onboarding.controller';
 import { validateAuthToken } from '@/middleware/auth.middleware';
@@ -15,5 +16,6 @@ onboarding.get(
     validateAuthToken,
     validateTokenAndConfirmUser,
 );
+onboarding.get('/send-reminder', sendOnboardingReminders);
 
 export default onboarding;

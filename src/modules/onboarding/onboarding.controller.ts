@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { emailService } from '@utils/third-party/email/email-service';
 import { Onboarding, UserTypeEnum } from '@database/models/onboarding.model';
-import Sequelize from 'sequelize';
+import Sequelize, { Op } from 'sequelize';
 import crypto from 'crypto';
 import {
     extractCompanyName,
@@ -80,6 +80,7 @@ const handleOnboarding = async (
         if (emailTemplate.name === EmailTemplate.regularApplication.name) {
             const name = extractFirstName(newEntry.name);
             emailService.sendEmail(
+                EmailTemplate.regularApplication.accountKey,
                 newEntry.email,
                 EmailTemplate.regularApplication.subject,
                 EmailTemplate.regularApplication.name,
@@ -92,6 +93,7 @@ const handleOnboarding = async (
             emailTemplate.name === EmailTemplate.existingApplication.name
         ) {
             emailService.sendEmail(
+                EmailTemplate.existingApplication.accountKey,
                 newEntry.email,
                 EmailTemplate.existingApplication.subject,
                 EmailTemplate.existingApplication.name,
@@ -201,5 +203,49 @@ export const validateTokenAndConfirmUser = async (
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
         return;
+    }
+};
+
+export const sendOnboardingReminders = async (req: Request, res: Response) => {
+    try {
+        const threeDaysAgo = new Date();
+        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+        const usersToRemind = await Onboarding.findAll({
+            where: {
+                token: { [Op.not]: null }, // User must still have a token
+                createdAt: { [Op.lte]: threeDaysAgo }, // Created 3+ days ago
+                reminderSent: false, // Ensure we don’t send twice
+            },
+        });
+
+        if (usersToRemind.length === 0) {
+            res.json({ message: 'No users need reminders.' });
+            return;
+        }
+
+        for (const user of usersToRemind) {
+            const emailTemplate = EmailTemplate.reminder;
+
+            emailService.sendEmail(
+                emailTemplate.accountKey,
+                user.email,
+                emailTemplate.subject,
+                emailTemplate.name,
+                {
+                    confirm_url: `${MAIN_APP_URL}?token=${user.token}`,
+                },
+            );
+
+            // Mark user as reminded
+            user.update({ reminderSent: true });
+        }
+
+        res.json({
+            message: `Reminder emails sent to ${usersToRemind.length} users.`,
+        });
+    } catch (error) {
+        console.error('❌ Error sending reminder emails:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
