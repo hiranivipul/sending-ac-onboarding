@@ -40,7 +40,8 @@ jobs:
         run: |
           echo "GITHUB_TOKEN is set: ${#GITHUB_TOKEN} characters long"
           
-          CLIENT_REPO_URL="https://${GITHUB_TOKEN}@github.com/sending-ac/onboarding.git"
+          # URL Encoding Fix
+          CLIENT_REPO_URL=$(echo "https://${GITHUB_TOKEN}@github.com/sending-ac/onboarding.git" | sed 's/@/%40/g')
 
           # Ensure the remote is correct
           if git remote get-url client &>/dev/null; then
