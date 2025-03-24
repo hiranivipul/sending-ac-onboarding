@@ -40,7 +40,7 @@ jobs:
         run: |
           echo "GITHUB_TOKEN is set: ${#GITHUB_TOKEN} characters long"
           
-          CLIENT_REPO_URL="https://github.com/sending-ac/onboarding.git"
+          CLIENT_REPO_URL="https://github.com/sending-ac/onboarding"
 
           if git remote get-url client &>/dev/null; then
             echo "Remote 'client' exists. Updating URL..."
