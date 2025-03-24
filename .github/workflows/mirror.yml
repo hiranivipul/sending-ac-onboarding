@@ -40,21 +40,18 @@ jobs:
         run: |
           echo "GITHUB_TOKEN is set: ${#GITHUB_TOKEN} characters long"
           
-          CLIENT_REPO_URL="https://github.com/sending-ac/onboarding.git"
+          CLIENT_REPO_URL="https://${GITHUB_TOKEN}@github.com/sending-ac/onboarding.git"
 
+          # Ensure the remote is correct
           if git remote get-url client &>/dev/null; then
-            echo "Remote 'client' exists. Updating URL..."
             git remote set-url client "$CLIENT_REPO_URL"
           else
-            echo "Adding new remote 'client'..."
             git remote add client "$CLIENT_REPO_URL"
           fi
-
-          git config --global credential.helper store
-          echo "https://${GITHUB_TOKEN}:x-oauth-basic@github.com" > ~/.git-credentials
 
           echo "Current remote URLs:"
           git remote -v
 
+          # Push to the client repo
           git push --force --all client || echo "❌ Failed to push branches"
           git push --force --tags client || echo "❌ Failed to push tags"
