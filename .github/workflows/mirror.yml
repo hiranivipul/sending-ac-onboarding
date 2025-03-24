@@ -34,13 +34,25 @@ jobs:
             git commit --amend --no-edit --author="Vipul Hirani <hiranivipuls@gmail.com>" || echo "No changes to amend in branch $branch"
           done
 
-      - name: Push all branches to client repo
+      - name: Set up remote and push to client repo
         env:
           GITHUB_TOKEN: ${{ secrets.CLIENT_REPO_PAT }}
         run: |
-          echo "Using remote URL: https://x-access-token:${GITHUB_TOKEN}@github.com/sending-ac/onboarding.git"
-          
-          git remote add client https://x-access-token:${GITHUB_TOKEN}@github.com/sending-ac/onboarding.git || echo "Remote already exists"
-          
-          git push --force --all client || echo "Failed to push branches to client repo"
-          git push --force --tags client || echo "Failed to push tags to client repo"
+          CLIENT_REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/sending-ac/onboarding.git"
+
+          # Check if the remote already exists
+          if git remote get-url client &>/dev/null; then
+            echo "Remote 'client' exists. Updating URL..."
+            git remote set-url client "$CLIENT_REPO_URL"
+          else
+            echo "Adding new remote 'client'..."
+            git remote add client "$CLIENT_REPO_URL"
+          fi
+
+          # Verify the remote URL
+          echo "Current remote URLs:"
+          git remote -v
+
+          # Force push all branches and tags to the client repo
+          git push --force --all client || echo "❌ Failed to push branches"
+          git push --force --tags client || echo "❌ Failed to push tags"
