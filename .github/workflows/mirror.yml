@@ -3,7 +3,7 @@ name: Mirror Repo to Client (Change Author & Exclude .github)
 on:
   push:
     branches:
-      - '**'  # Trigger on any branch push
+      - '**'
   workflow_dispatch:
 
 jobs:
@@ -38,9 +38,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.CLIENT_REPO_PAT }}
         run: |
-          CLIENT_REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/sending-ac/onboarding.git"
+          echo "GITHUB_TOKEN is set: ${#GITHUB_TOKEN} characters long"
+          
+          CLIENT_REPO_URL="https://github.com/sending-ac/onboarding.git"
 
-          # Check if the remote already exists
           if git remote get-url client &>/dev/null; then
             echo "Remote 'client' exists. Updating URL..."
             git remote set-url client "$CLIENT_REPO_URL"
@@ -49,10 +50,11 @@ jobs:
             git remote add client "$CLIENT_REPO_URL"
           fi
 
-          # Verify the remote URL
+          git config --global credential.helper store
+          echo "https://${GITHUB_TOKEN}:x-oauth-basic@github.com" > ~/.git-credentials
+
           echo "Current remote URLs:"
           git remote -v
 
-          # Force push all branches and tags to the client repo
           git push --force --all client || echo "❌ Failed to push branches"
           git push --force --tags client || echo "❌ Failed to push tags"
