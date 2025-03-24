@@ -41,16 +41,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.CLIENT_REPO_PAT }}
         run: |
-          # Authenticate with GitHub token
-          git config --global credential.helper store
-          echo "https://${GITHUB_TOKEN}:x-oauth-basic@github.com" > ~/.git-credentials
-          
           # Ensure remote doesn't already exist
           if ! git remote | grep -q "^client$"; then
             git remote add client https://github.com/sending-ac/onboarding.git
           fi
           
-       
+          # Authenticate with GitHub token
+          git config --global credential.helper store
+          git remote add client https://x-access-token:${GITHUB_TOKEN}@github.com/sending-ac/onboarding.git
+          echo "Using remote URL: https://x-access-token:${GITHUB_TOKEN}@github.com/sending-ac/onboarding.git"
+        
           # Force push all branches and tags to the client repo
           git push --force --all client || echo "Failed to push branches to client repo. Check if the repository exists and the token has access."
           git push --force --tags client || echo "Failed to push tags to client repo. Check if the repository exists and the token has access."
