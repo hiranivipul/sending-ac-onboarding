@@ -206,7 +206,7 @@ export const validateTokenAndConfirmUser = async (
     }
 };
 
-export const sendOnboardingReminders = async (req: Request, res: Response) => {
+export const sendOnboardingReminders = async () => {
     try {
         const threeDaysAgo = new Date();
         threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
@@ -220,14 +220,14 @@ export const sendOnboardingReminders = async (req: Request, res: Response) => {
         });
 
         if (usersToRemind.length === 0) {
-            res.json({ message: 'No users need reminders.' });
-            return;
+            console.log('✅ No users need reminders.');
+            return false;
         }
 
         for (const user of usersToRemind) {
             const emailTemplate = EmailTemplate.reminder;
 
-            emailService.sendEmail(
+            await emailService.sendEmail(
                 emailTemplate.accountKey,
                 user.email,
                 emailTemplate.subject,
@@ -238,14 +238,15 @@ export const sendOnboardingReminders = async (req: Request, res: Response) => {
             );
 
             // Mark user as reminded
-            user.update({ reminderSent: true });
+            await user.update({ reminderSent: true });
         }
 
-        res.json({
-            message: `Reminder emails sent to ${usersToRemind.length} users.`,
-        });
+        console.log(
+            `✅ Reminder emails sent to ${usersToRemind.length} users.`,
+        );
+        return true;
     } catch (error) {
         console.error('❌ Error sending reminder emails:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        return false;
     }
 };

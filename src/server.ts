@@ -5,6 +5,7 @@ import logger from '@utils/logger';
 import { DB } from '@/database';
 import { PORT } from './config';
 import { errorHandler } from '@utils/error-handler';
+import './utils/cron-job';
 
 const appServer = express();
 const port = PORT;
